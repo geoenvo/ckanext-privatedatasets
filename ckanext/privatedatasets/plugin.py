@@ -166,6 +166,28 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
         return action_functions
 
     ######################################################################
+    ################ IPACKAGECONTROLLER & IRESOURCECONTROLLER ############
+    ######################################################################
+
+    def after_delete(self, context, obj):
+        if isinstance(obj, list):
+            self._after_delete_resource(context, obj)
+        else:
+            self._after_delete_pkg(context, obj)
+
+    def after_create(self, context, obj):
+        if "size" in obj:
+            self._after_create_resource(context, obj)
+        else:
+            self._after_create_pkg(context, obj)
+
+    def after_update(self, context, obj):
+        if "size" in obj:
+            self._after_update_resource(context, obj)
+        else:
+            self._after_update_pkg(context, obj)
+
+    ######################################################################
     ######################### IPACKAGECONTROLLER #########################
     ######################################################################
 
@@ -184,7 +206,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
         return pkg_dict
 
-    def after_create(self, context, pkg_dict):
+    def _after_create_pkg(self, context, pkg_dict):
         session = context['session']
         update_cache = False
 
@@ -236,7 +258,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
         return pkg_dict
 
-    def after_update(self, context, pkg_dict):
+    def _after_update_pkg(self, context, pkg_dict):
         return self.after_create(context, pkg_dict)
 
     def after_show(self, context, pkg_dict):
@@ -265,7 +287,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
         return pkg_dict
 
-    def after_delete(self, context, pkg_dict):
+    def _after_delete_pkg(self, context, pkg_dict):
         session = context['session']
         package_id = pkg_dict['id']
 
@@ -352,6 +374,15 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
         pass
 
     def before_delete(self, context, resource, resources):
+        pass
+
+    def _after_create_resource(self, context, resource):
+        pass
+
+    def _after_delete_resource(self, context, resources):
+        pass
+
+    def _after_update_resource(self, context, resource):
         pass
 
     def before_show(self, resource_dict):
